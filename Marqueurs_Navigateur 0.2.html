@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OlypsyLab – Dashboard Premium</title>
+
+<style>
+    :root {
+        --bg: #f2f2f7;
+        --bg-elevated: #ffffff;
+        --bg-sidebar: #101117;
+        --accent: #0a84ff;
+        --accent-soft: #e5f1ff;
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --border-subtle: rgba(0,0,0,0.06);
+        --shadow-soft: 0 18px 40px rgba(0,0,0,0.12);
+        --radius-large: 22px;
+        --radius-medium: 16px;
+    }
+
+    body.dark {
+        --bg: #050712;
+        --bg-elevated: #0b1020;
+        --bg-sidebar: #020308;
+        --accent: #4facff;
+        --accent-soft: rgba(56,189,248,0.16);
+        --text-primary: #f9fafb;
+        --text-secondary: #9ca3af;
+        --border-subtle: rgba(148,163,184,0.45);
+        --shadow-soft: 0 20px 60px rgba(0,0,0,0.8);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+        background: radial-gradient(circle at top left,#ffffff 0,var(--bg) 45%,#d1d5db 100%);
+        color: var(--text-primary);
+        -webkit-font-smoothing: antialiased;
+        transition: background .25s ease, color .25s ease;
+    }
+    body.dark {
+        background: radial-gradient(circle at top left,#020617 0,var(--bg) 55%,#020617 100%);
+    }
+
+    .app-shell {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+        width: 240px;
+        background: radial-gradient(circle at top left,#1f2937 0,var(--bg-sidebar) 55%,#000 100%);
+        color: #f9fafb;
+        padding: 18px 18px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+    }
+
+    .logo-block {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 10px 12px;
+        border-radius: 18px;
+        background: linear-gradient(145deg, rgba(148,163,253,0.18), rgba(56,189,248,0.24));
+        box-shadow: 0 18px 40px rgba(15,23,42,0.8);
+    }
+
+    .logo-icon {
+        width: 34px;
+        height: 34px;
+        border-radius: 13px;
+        background: radial-gradient(circle at 20% 0, #4ade80 0, #22c55e 26%, #0ea5e9 70%, #6366f1 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 700;
+        font-size: 20px;
+        box-shadow: 0 0 0 4px rgba(15,23,42,0.45);
+    }
+
+    .logo-text-title { font-size: 15px; font-weight: 600; letter-spacing: .01em; }
+    .logo-text-sub { font-size: 11px; opacity: 0.76; }
+
+    .sidebar-section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .16em;
+        opacity: 0.45;
+        padding: 4px 4px 0;
+    }
+
+    .sidebar-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 14px;
+    }
+
+    .nav-item {
+        padding: 9px 12px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        font-size: 14px;
+        color: rgba(249,250,251,0.78);
+        cursor: pointer;
+        transition: background .18s ease, transform .12s ease, color .18s ease;
+    }
+
+    .nav-item span.icon {
+        width: 22px;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .nav-item.active {
+        background: linear-gradient(135deg, rgba(59,130,246,0.9), rgba(59,130,246,0.3));
+        color: #f9fafb;
+        box-shadow: 0 14px 30px rgba(37,99,235,0.9);
+        transform: translateY(-1px);
+    }
+
+    .nav-item:hover:not(.active) {
+        background: rgba(148,163,184,0.15);
+        transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+        margin-top: auto;
+        font-size: 11px;
+        opacity: 0.45;
+        padding: 0 4px;
+    }
+
+    /* MAIN */
+
+    .main-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    .main-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(249,250,251,0.85);
+        backdrop-filter: saturate(160%) blur(18px);
+        border-bottom: 1px solid rgba(148,163,184,0.35);
+        transition: background .25s ease, border-color .25s ease;
+    }
+    body.dark .main-header {
+        background: rgba(15,23,42,0.88);
+        border-bottom-color: rgba(31,41,55,0.9);
+    }
+
+    .main-header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 22px 12px;
+    }
+
+    .main-title-block { display: flex; flex-direction: column; gap: 2px; }
+    .main-title { font-size: 20px; font-weight: 650; }
+    .main-subtitle { font-size: 13px; color: var(--text-secondary); }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .header-pill {
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(15,23,42,0.04);
+        border: 1px solid rgba(148,163,184,0.45);
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #4b5563;
+    }
+    body.dark .header-pill {
+        background: rgba(15,23,42,0.65);
+        color: #e5e7eb;
+    }
+
+    .status-dot {
+        width: 7px; height: 7px; border-radius: 50%;
+        background: #22c55e;
+        box-shadow: 0 0 0 4px rgba(34,197,94,0.4);
+    }
+
+    /* Dark / Light toggle */
+
+    .theme-toggle {
+        position: relative;
+        width: 52px;
+        height: 26px;
+        border-radius: 999px;
+        background: rgba(148,163,184,0.3);
+        border: 1px solid rgba(148,163,184,0.7);
+        display: flex;
+        align-items: center;
+        padding: 2px;
+        cursor: pointer;
+        font-size: 11px;
+        color: #6b7280;
+    }
+    body.dark .theme-toggle {
+        background: rgba(15,23,42,0.9);
+        border-color: rgba(55,65,81,0.95);
+        color: #e5e7eb;
+    }
+
+    .theme-toggle-knob {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        border-radius: 999px;
+        background: #ffffff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        transition: transform .22s cubic-bezier(0.21,0.9,0.32,1.2), background .22s ease;
+    }
+    body.dark .theme-toggle-knob {
+        transform: translateX(24px);
+        background: #020617;
+    }
+
+    .theme-toggle-labels {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 7px;
+        z-index: 1;
+    }
+
+    .main-content {
+        padding: 20px 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    /* TOP ROW */
+
+    .top-row {
+        display: grid;
+        grid-template-columns: minmax(260px, 360px) minmax(220px, 1fr);
+        gap: 18px;
+        align-items: stretch;
+    }
+
+    .card {
+        background: rgba(255,255,255,0.92);
+        border-radius: var(--radius-large);
+        box-shadow: var(--shadow-soft);
+        border: 1px solid rgba(148,163,184,0.18);
+        padding: 18px 18px 20px;
+        position: relative;
+        overflow: hidden;
+        transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+    body.dark .card {
+        background: rgba(15,23,42,0.95);
+        border-color: rgba(31,41,55,0.95);
+        box-shadow: 0 22px 60px rgba(0,0,0,0.9);
+    }
+
+    .card h2 {
+        margin: 0 0 6px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: .01em;
+    }
+
+    .card p {
+        margin: 0;
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+
+    /* RADAR + ICONS */
+
+    .radar-wrapper {
+        position: relative;
+        margin-top: 10px;
+        padding: 8px 4px 10px;
+        max-width: 360px;
+        margin-inline: auto;
+    }
+
+    canvas#radarCanvas {
+        width: 100%;
+        max-width: 340px;
+        aspect-ratio: 1/1;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .radar-icons-ring {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+    }
+
+    .radar-icon-btn {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        border: 1px solid rgba(148,163,184,0.65);
+        background: rgba(249,250,251,0.96);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        box-shadow: 0 10px 24px rgba(15,23,42,0.35);
+        cursor: pointer;
+        pointer-events: auto;
+        transform: translate(-50%, -50%);
+        transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, background .16s ease;
+    }
+    body.dark .radar-icon-btn {
+        background: rgba(15,23,42,0.96);
+        border-color: rgba(55,65,81,0.95);
+    }
+
+    .radar-icon-btn:hover {
+        transform: translate(-50%, -52%);
+        box-shadow: 0 16px 36px rgba(15,23,42,0.6);
+        border-color: var(--accent);
+    }
+
+    .radar-icon-btn.active {
+        border-color: var(--accent);
+        box-shadow: 0 18px 40px rgba(37,99,235,0.9);
+    }
+
+    .radar-legend {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        font-size: 11px;
+    }
+
+    .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: #f3f4f6;
+    }
+    body.dark .legend-item {
+        background: rgba(15,23,42,0.9);
+        border: 1px solid rgba(55,65,81,0.9);
+    }
+
+    .legend-color {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+    }
+
+    .pill-row {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .small-pill {
+        font-size: 11px;
+        padding: 4px 9px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid rgba(59,130,246,0.22);
+    }
+    body.dark .small-pill {
+        background: rgba(15,23,42,0.9);
+        color: #bfdbfe;
+        border-color: rgba(37,99,235,0.9);
+    }
+
+    /* FOCUS PANEL (quart qui devient carré) */
+
+    .focus-panel {
+        position: absolute;
+        inset: 60px 10px 12px;
+        border-radius: 18px;
+        background: radial-gradient(circle at top left, rgba(56,189,248,0.25), rgba(15,23,42,0.9));
+        color: #f9fafb;
+        padding: 14px 14px 14px;
+        box-shadow: 0 18px 44px rgba(15,23,42,0.9);
+        transform-origin: center;
+        transform: scale(0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .22s ease, transform .22s cubic-bezier(0.21,0.9,0.32,1.2);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    body.dark .focus-panel {
+        background: radial-gradient(circle at top left, rgba(56,189,248,0.18), rgba(15,23,42,0.95));
+    }
+
+    .focus-panel.visible {
+        opacity: 1;
+        transform: scale(1);
+        pointer-events: auto;
+    }
+
+    .focus-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .focus-title-block {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .focus-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        background: rgba(15,23,42,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+    }
+
+    .focus-title {
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .focus-chip {
+        font-size: 10px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: rgba(15,23,42,0.8);
+        border: 1px solid rgba(191,219,254,0.8);
+    }
+
+    .focus-body {
+        font-size: 12px;
+        line-height: 1.5;
+        opacity: 0.95;
+    }
+
+    .focus-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 4px;
+    }
+
+    .focus-tag {
+        font-size: 10px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: rgba(15,23,42,0.8);
+        border: 1px solid rgba(191,219,254,0.6);
+    }
+
+    .focus-metrics {
+        margin-top: 4px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 11px;
+    }
+
+    .focus-metric-pill {
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(15,23,42,0.9);
+        border: 1px solid rgba(148,163,184,0.8);
+    }
+
+    .focus-back-btn {
+        margin-top: auto;
+        align-self: flex-start;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(191,219,254,0.8);
+        background: rgba(15,23,42,0.9);
+        color: #e5e7eb;
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+    }
+
+    /* SUMMARY CARD */
+
+    .summary-metrics {
+        margin-top: 8px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 9px;
+    }
+
+    .metric {
+        padding: 9px 10px;
+        border-radius: 14px;
+        background: #f9fafb;
+        border: 1px solid rgba(148,163,184,0.4);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+    body.dark .metric {
+        background: rgba(15,23,42,0.9);
+        border-color: rgba(55,65,81,0.9);
+    }
+
+    .metric-label { font-size: 11px; color: var(--text-secondary); }
+    .metric-value { font-size: 18px; font-weight: 600; }
+    .metric-extra { font-size: 11px; color: var(--text-secondary); }
+
+    /* TOPIC GRID */
+
+    .grid-title-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 6px;
+    }
+
+    .grid-title-row h2 {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .grid-title-row span {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+
+    .topic-grid {
+        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 14px;
+    }
+
+    .topic-card {
+        background: rgba(255,255,255,0.92);
+        border-radius: var(--radius-medium);
+        border: 1px solid var(--border-subtle);
+        padding: 12px 12px 13px;
+        box-shadow: 0 12px 26px rgba(15,23,42,0.16);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transform: translateY(0);
+        transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .25s ease;
+    }
+    body.dark .topic-card {
+        background: rgba(15,23,42,0.98);
+        border-color: rgba(55,65,81,0.9);
+        box-shadow: 0 20px 54px rgba(0,0,0,0.9);
+    }
+
+    .topic-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 40px rgba(15,23,42,0.22);
+        border-color: rgba(59,130,246,0.55);
+    }
+
+    .topic-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .topic-title-block {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .topic-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background: #eff6ff;
+    }
+    body.dark .topic-icon {
+        background: rgba(15,23,42,0.9);
+        border: 1px solid rgba(59,130,246,0.8);
+    }
+
+    .topic-name { font-size: 14px; font-weight: 550; }
+
+    .topic-chip {
+        font-size: 10px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: #f3f4f6;
+        color: #4b5563;
+        border: 1px solid rgba(148,163,184,0.8);
+    }
+    body.dark .topic-chip {
+        background: rgba(15,23,42,0.9);
+        color: #e5e7eb;
+        border-color: rgba(55,65,81,0.9);
+    }
+
+    .investigation-row {
+        font-size: 11px;
+        color: var(--text-secondary);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .steps { display: flex; gap: 4px; }
+
+    .step {
+        flex: 1;
+        height: 8px;
+        border-radius: 999px;
+        background: #e5e7eb;
+        position: relative;
+        overflow: hidden;
+    }
+    body.dark .step {
+        background: rgba(31,41,55,0.9);
+    }
+
+    .step.active::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        background: linear-gradient(90deg,#60a5fa,#22c55e);
+    }
+
+    .score-row { font-size: 11px; display: flex; flex-direction: column; gap: 4px; }
+
+    .score-bar {
+        width: 100%;
+        height: 9px;
+        border-radius: 999px;
+        background: #e5e7eb;
+        overflow: hidden;
+    }
+    body.dark .score-bar {
+        background: rgba(31,41,55,0.95);
+    }
+
+    .score-fill {
+        height: 100%;
+        border-radius: 999px;
+        transition: width 0.9s cubic-bezier(0.21,0.9,0.35,1);
+    }
+
+    .score-label-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--text-secondary);
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tag {
+        font-size: 10px;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+    body.dark .tag {
+        background: rgba(15,23,42,0.95);
+        color: #bfdbfe;
+        border: 1px solid rgba(37,99,235,0.9);
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+        .sidebar { display: none; }
+        .main-header-inner { padding-inline: 16px; }
+        .main-content { padding-inline: 16px; }
+    }
+
+    @media (max-width: 720px) {
+        .top-row { grid-template-columns: 1fr; }
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+.band-cards {
+    background: #ffffff;
+    padding: 16px 16px;
+    border-radius: 16px;
+    box-shadow: 0 12px 26px rgba(0,0,0,0.12);
+    height: 190px;
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    overflow-x: auto;
+    margin-top: 10px;
+}
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo-block">
+            <div class="logo-icon">O</div>
+            <div>
+                <div class="logo-text-title">OlypsyLab</div>
+                <div class="logo-text-sub">Tableau de bord intégratif</div>
+            </div>
+        </div>
+
+        <div>
+            <div class="sidebar-section-label">Navigation</div>
+            <div class="sidebar-nav">
+                <a href="#vue-globale-title" class="nav-item" id="nav-vueglobale">
+                    <span class="icon">📊</span>
+                    <span>Vue globale</span>
+                </a>
+                <a href="#facteurs-sante" class="nav-item" id="nav-facteurs">
+                    <span class="icon">🧭</span>
+                    <span>Facteurs de santé</span>
+                </a>
+                <a href="#marqueurs-sante" class="nav-item" id="nav-marqueurs">
+                    <span class="icon">🧪</span>
+                    <span>Marqueurs de santé</span>
+                </a>
+                <a href="#programme-accompagnement" class="nav-item" id="nav-programme">
+                    <span class="icon">📋</span>
+                    <span>Programme d’accompagnement</span>
+                </a>
+                <a href="#parametres" class="nav-item">
+                    <span class="icon">⚙️</span>
+                    <span>Paramètres</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            Prototype UI • Données fictives<br/>
+            v0.3 • Radar interactif + Dark/Light
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-area">
+        <header class="main-header">
+            <div class="main-header-inner">
+                <div class="main-title-block">
+                    <div class="main-title">Vue d’ensemble santé psychique</div>
+                    <div class="main-subtitle">
+                        Intégration multi-systémique : sommeil, activité, systèmes métaboliques & psychologiques
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="theme-toggle" id="themeToggle">
+                        <div class="theme-toggle-knob"></div>
+                        <div class="theme-toggle-labels">
+                            <span>☀️</span><span>🌙</span>
+                        </div>
+                    </div>
+                    <div class="header-pill">
+                        <span class="status-dot"></span>
+                        Profil synchronisé • Dernier screening il y a 3 jours
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <section class="main-content">
+
+            <!-- TOP LAYER -->
+            <div class="section-trigger" data-section="vueglobale"></div>
+            <h1 id="vue-globale-title" style="font-size:32px; margin:0 0 20px;">Vue globale</h1>
+            <div class="top-row">
+                <!-- SUMMARY -->
+                <div class="card">
+                    <h2>Résumé synthétique</h2>
+                    <p>Photo globale de la profondeur d’exploration et des zones de vigilance clinique.</p>
+
+                    <div class="summary-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Score moyen global</div>
+                            <div class="metric-value" id="globalScore">–</div>
+                            <div class="metric-extra">Équilibre moyen des systèmes évalués</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Thématiques en priorité 1</div>
+                            <div class="metric-value" id="priorityCount">–</div>
+                            <div class="metric-extra">Zones à suivre de près à court terme</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Niveau d’investigation moyen</div>
+                            <div class="metric-value" id="investigationMean">–</div>
+                            <div class="metric-extra">0 : aucun • 4 : bio + tracking</div>
+                        </div>
+                    </div>
+
+                    <div class="pill-row">
+                        <span class="small-pill">Priorité 1 = score &lt; 55</span>
+                        <span class="small-pill">Priorité 2 = 55–70</span>
+                        <span class="small-pill">Green zone &gt; 70</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRID OF TOPICS -->
+
+            <!-- EXTRA SECTIONS -->
+
+            <div style="height:700px;"></div>
+            <div class="section-trigger" data-section="facteurs"></div>
+            <h1 id="facteurs-sante" style="font-size:32px; margin-top:40px;">Facteurs de santé</h1>
+
+            <!-- FACTEURS DE SANTÉ — INTERFACE VISUELLE (CARDS VERSION) -->
+            <div id="facteurs-sante-schema" style="margin-top:20px; max-height:350px; overflow-y:auto; padding-right:8px;">
+                
+                <div style="display:flex; flex-direction:row; gap:14px; flex-wrap:wrap;">
+
+                    <!-- Niveau 1 -->
+                    <div class="topic-card" style="background:#c7eaff; width:160px; min-height:120px; display:flex; align-items:center;">
+                        <div class="topic-header">
+                            <div class="topic-title-block">
+                                <div class="topic-icon">🧬</div>
+                                <div class="topic-name">Niveau 1 — Épigénétique</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Niveau 2 -->
+                    <div class="topic-card" style="background:#a7f3d0; width:160px; min-height:120px; display:flex; align-items:center;">
+                        <div class="topic-header">
+                            <div class="topic-title-block">
+                                <div class="topic-icon">🔥</div>
+                                <div class="topic-name">Niveau 2 — Inflammatoire</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Niveau 3 -->
+                    <div class="topic-card" style="background:#fef08a; width:160px; min-height:120px; display:flex; align-items:center;">
+                        <div class="topic-header">
+                            <div class="topic-title-block">
+                                <div class="topic-icon">⚡</div>
+                                <div class="topic-name">Niveau 3 — Métabolique</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Niveau 4 -->
+                    <div class="topic-card" style="background:#fecaca; width:160px; min-height:120px; display:flex; align-items:center;">
+                        <div class="topic-header">
+                            <div class="topic-title-block">
+                                <div class="topic-icon">🧠</div>
+                                <div class="topic-name">Niveau 4 — Neurologique</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Niveau 5 -->
+                    <div class="topic-card" style="background:#fbcfe8; width:160px; min-height:120px; display:flex; align-items:center;">
+                        <div class="topic-header">
+                            <div class="topic-title-block">
+                                <div class="topic-icon">🎯</div>
+                                <div class="topic-name">Niveau 5 — Fonctionnel</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div style="height:700px;"></div>
+            <div class="section-trigger" data-section="marqueurs"></div>
+            <h1 id="marqueurs-sante" style="font-size:32px; margin-top:40px;">Marqueurs de santé</h1>
+
+            <div id="marqueurs-layout" style="display:flex; gap:20px; align-items:flex-start;">
+            <div class="card" id="radarCard" style="max-width:480px; margin:auto; margin-top:60px;">
+                <h2>Profil global des thématiques</h2>
+                <p>Clique sur une icône autour du radar pour explorer une thématique en détail.</p>
+
+                <div class="radar-wrapper">
+                    <canvas id="radarCanvas"></canvas>
+
+                    <!-- Icônes autour du radar -->
+                    <div class="radar-icons-ring" id="radarIconsRing"></div>
+
+                    <!-- Panneau focus -->
+                    <div class="focus-panel" id="focusPanel">
+                        <div class="focus-header">
+                            <div class="focus-title-block">
+                                <div class="focus-icon" id="focusIcon">🌙</div>
+                                <div>
+                                    <div class="focus-title" id="focusTitle">Sommeil</div>
+                                    <div class="focus-chip" id="focusChip">Questionnaire avancé + tracking</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="focus-body" id="focusBody">
+                            Description détaillée de la thématique sélectionnée.
+                        </div>
+
+                        <div class="focus-tags" id="focusTags"></div>
+
+                        <div class="focus-metrics" id="focusMetrics"></div>
+
+                        <button class="focus-back-btn" id="focusBackBtn">
+                            ⟵ Retour au radar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="radar-legend" id="radarLegend"></div>
+
+                <div class="pill-row">
+                    <span class="small-pill">Score 0–100 par thématique</span>
+                    <span class="small-pill">Icônes interactives autour du radar</span>
+                    <span class="small-pill">Vue focus = « quart du radar » → carte carrée</span>
+                </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin:10px 0;">
+                <select id="priorityFilter" style="padding:6px 10px; border-radius:8px; border:1px solid rgba(148,163,184,0.45);">
+                    <option value="asc">Priorité croissante</option>
+                    <option value="desc">Priorité décroissante</option>
+                </select>
+            </div>
+            <div class="grid-title-row">
+                <h2>Thématiques détaillées</h2>
+                <span>Base de travail pour la future intégration dans l’application OlypsyLab</span>
+            </div>
+            <div class="topic-grid" id="topicGrid"></div>
+            </div>
+
+            <div style="height:700px;"></div>
+            <div class="section-trigger" data-section="programme"></div>
+            <h1 id="programme-accompagnement" style="font-size:32px; margin-top:40px;">Programmes d’accompagnement</h1>
+
+            <div style="height:80px;"></div>
+
+            <div class="card" id="programme-extra-block" style="padding:20px; margin-top:20px;">
+                <h2>Espace supplémentaire</h2>
+                <p>Zone à remplir ultérieurement.</p>
+            </div>
+
+            <div style="height:500px;"></div>
+
+        </section>
+    </main>
+</div>
+
+<script>
+const topics = [
+    {
+        icon: "🌙",
+        name: "Sommeil",
+        investigation: 2,
+        score: 42,
+        tags: ["Réveils nocturnes", "Routine instable"],
+        description: "Qualité globale du sommeil, continuité de nuit et stabilité des routines d’endormissement et de lever."
+    },
+    {
+        icon: "🔥",
+        name: "Addiction",
+        investigation: 1,
+        score: 48,
+        tags: ["Craving", "Contexte social"],
+        description: "Dynamique de dépendance, déclencheurs, gestion des envies et exposition aux contextes à risque."
+    },
+    {
+        icon: "🦠",
+        name: "Digestif",
+        investigation: 3,
+        score: 70,
+        tags: ["Ballonnements", "Irritation"],
+        description: "Fonction digestive, tolérances alimentaires, confort intestinal et liens avec l’inflammation systémique."
+    },
+    {
+        icon: "🧬",
+        name: "Immunitaire",
+        investigation: 4,
+        score: 55,
+        tags: ["Inflammation", "Marqueurs IgG"],
+        description: "Profil inflammatoire, réponses immunitaires et facteurs de vulnérabilité sur le moyen terme."
+    },
+    {
+        icon: "🏃‍♂️",
+        name: "Activité physique",
+        investigation: 2,
+        score: 82,
+        tags: ["Mobilité", "Volume hebdo"],
+        description: "Niveau d’activité, équilibre charge/récupération et intégration du mouvement dans le quotidien."
+    },
+    {
+        icon: "🧠",
+        name: "Neurobiologique",
+        investigation: 1,
+        score: 60,
+        tags: ["Stress", "Régulation émotionnelle"],
+        description: "Réactivité au stress, régulation des systèmes neurobiologiques et équilibre des états d’activation."
+    },
+    {
+        icon: "💬",
+        name: "Psychologique",
+        investigation: 3,
+        score: 73,
+        tags: ["Ruminations", "Motivation"],
+        description: "Schémas de pensée, dynamique motivationnelle, ruminations et ressources psychiques disponibles."
+    }
+];
+
+function colorForScore(score) {
+    if (score < 55) return "#f97373";
+    if (score < 70) return "#fb923c";
+    if (score < 82) return "#34d399";
+    return "#22c55e";
+}
+
+// THEME TOGGLE
+const themeToggle = document.getElementById("themeToggle");
+themeToggle.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+});
+
+// TOPIC CARDS
+const grid = document.getElementById("topicGrid");
+
+// regroupement par priorité
+function priorityLevel(score){
+    return score < 55 ? 1 : score < 70 ? 2 : score < 82 ? 3 : 4;
+}
+
+let grouped = {
+    1: [],
+    2: [],
+    3: [],
+    4: []
+};
+
+topics.forEach((t, index)=>{
+    const p = priorityLevel(t.score);
+    grouped[p].push({...t, index});
+});
+
+// fonction de création de carte
+function createTopicCard(t){
+    const card = document.createElement("div");
+    if (t.name === "Sommeil") {
+        card.style.position = "relative";
+        card.style.left = "-674px";
+        card.style.top = "-20px";
+    }
+    if (t.name === "Addiction") {
+        card.style.position = "relative";
+        card.style.left = "-427px";
+        card.style.top = "-216px";
+    }
+    // Position adjustment for Immunitaire card
+    if (t.name === "Immunitaire") {
+        card.style.position = "relative";
+        card.style.top = "-205px";
+        card.style.left = "-673px";
+    }
+    card.className = "topic-card";
+    card.style.animation = `fadeUp 0.5s ease forwards`;
+
+    let stepsHTML = "";
+    for (let i = 0; i < 4; i++) {
+        stepsHTML += `<div class="step ${i < t.investigation ? "active" : ""}"></div>`;
+    }
+
+    const barColor = colorForScore(t.score);
+
+    card.innerHTML = `
+        <div class="topic-header">
+            <div class="topic-title-block">
+                <div class="topic-icon">${t.icon}</div>
+                <div class="topic-name">${t.name}</div>
+            </div>
+            <div class="topic-chip">
+                ${t.investigation === 0 ? "Non exploré" :
+                    t.investigation === 1 ? "Q° simple" :
+                    t.investigation === 2 ? "Q° avancé" :
+                    t.investigation === 3 ? "Tracking" :
+                    "Bio + tracking"}
+            </div>
+        </div>
+
+        <div class="investigation-row">
+            <span>Niveau d’investigation</span>
+            <div class="steps">${stepsHTML}</div>
+        </div>
+
+        <div class="score-row">
+            <span>Niveau actuel</span>
+            <div class="score-bar">
+                <div class="score-fill" style="background:${barColor}; width:0%;" data-target="${t.score}"></div>
+            </div>
+            <div class="score-label-row">
+                <span>${t.score} / 100</span>
+                <span>${priorityLevel(t.score) === 1 ? "Priorité 1" :
+                        priorityLevel(t.score) === 2 ? "Priorité 2" :
+                        priorityLevel(t.score) === 3 ? "Priorité 3" :
+                        "Zone stable"}</span>
+            </div>
+        </div>
+
+        <div class="tags">
+            ${t.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}
+        </div>
+    `;
+    return card;
+}
+
+// affichage par lignes de priorité
+function renderGrid(order="asc"){
+    grid.innerHTML = "";
+    const levels = order === "asc" ? [1,2,3,4] : [4,3,2,1];
+
+    levels.forEach(level=>{
+        if(grouped[level].length){
+            const rowTitle = document.createElement("h3");
+            rowTitle.textContent = `Priorité ${level}`;
+            // Bandeau-style for Priorité 1
+            if (level === 1) {
+                rowTitle.style.background = "rgba(0,0,0,0.06)";
+                rowTitle.style.display = "block";
+                rowTitle.style.padding = "12px 16px";
+                rowTitle.style.borderRadius = "10px";
+                rowTitle.style.marginTop = "54px";
+                rowTitle.style.fontWeight = "600";
+                rowTitle.style.fontSize = "16px";
+            }
+            // Position the row title horizontally after the radar and vertically aligned with the radar card
+            rowTitle.style.display = rowTitle.style.display || "inline-block";
+            rowTitle.style.verticalAlign = "top";
+            rowTitle.style.marginTop = rowTitle.style.marginTop || "60px";
+            rowTitle.style.marginLeft = "-675px";
+            rowTitle.style.paddingLeft = "0px";
+            rowTitle.style.fontSize = rowTitle.style.fontSize || "16px";
+            rowTitle.style.opacity = "0.7";
+            grid.appendChild(rowTitle);
+
+            const row = document.createElement("div");
+            row.className = "band-cards";
+
+            grouped[level].forEach(t=>{
+                row.appendChild(createTopicCard(t));
+            });
+
+            grid.appendChild(row);
+        }
+    });
+}
+
+renderGrid();
+
+// filtre
+document.getElementById("priorityFilter").addEventListener("change", (e)=>{
+    renderGrid(e.target.value);
+});
+
+window.addEventListener("load", () => {
+    document.querySelectorAll(".score-fill").forEach(el => {
+        const target = parseInt(el.getAttribute("data-target"), 10) || 0;
+        requestAnimationFrame(() => {
+            el.style.width = `${target}%`;
+        });
+    });
+
+    computeSummary();
+    initRadar();
+    buildRadarIcons();
+});
+
+// SUMMARY
+function computeSummary() {
+    const scores = topics.map(t => t.score);
+    const inv = topics.map(t => t.investigation);
+    const avgScore = 69;
+    const avgInvestigation = (inv.reduce((a,b)=>a+b,0) / inv.length).toFixed(1);
+    const priority1 = topics.filter(t => t.score < 55).length;
+
+    document.getElementById("globalScore").textContent = `${avgScore}`;
+    document.getElementById("investigationMean").textContent = avgInvestigation;
+    document.getElementById("priorityCount").textContent = priority1;
+}
+
+// RADAR (homemade)
+let radarConfig = null;
+
+function initRadar() {
+    const canvas = document.getElementById("radarCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const dpr = window.devicePixelRatio || 1;
+    const size = canvas.clientWidth * dpr;
+    canvas.width = size;
+    canvas.height = size;
+
+    const center = { x: size / 2, y: size / 2 };
+    const maxRadius = size * 0.34;
+    const levels = 4;
+
+    const scores = topics.map(t => t.score);
+    const angles = topics.map((_, i) => (Math.PI * 2 * i / topics.length) - Math.PI / 2);
+
+    radarConfig = { canvas, ctx, size, center, maxRadius, levels, scores, angles };
+
+    const startTime = performance.now();
+    const duration = 900;
+
+    function draw(now) {
+        const progress = Math.min(1, (now - startTime) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+
+        drawRadarBase();
+        drawRadarPolygon(eased);
+
+        if (progress < 1) requestAnimationFrame(draw);
+    }
+
+    function drawRadarBase() {
+        const { ctx, size, center, maxRadius, levels, angles } = radarConfig;
+        ctx.clearRect(0,0,size,size);
+
+        ctx.save();
+        ctx.strokeStyle = "rgba(148,163,184,0.4)";
+        ctx.lineWidth = 1;
+        for (let l = 1; l <= levels; l++) {
+            const r = maxRadius * l / levels;
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, r, 0, Math.PI*2);
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.strokeStyle = "rgba(148,163,184,0.25)";
+        ctx.lineWidth = 1;
+        angles.forEach(angle => {
+            ctx.beginPath();
+            ctx.moveTo(center.x, center.y);
+            ctx.lineTo(center.x + maxRadius * Math.cos(angle), center.y + maxRadius * Math.sin(angle));
+            ctx.stroke();
+        });
+        ctx.restore();
+    }
+
+    function drawRadarPolygon(eased = 1) {
+        const { ctx, center, maxRadius, scores, angles } = radarConfig;
+
+        ctx.save();
+        const gradient = ctx.createLinearGradient(center.x - maxRadius, center.y - maxRadius, center.x + maxRadius, center.y + maxRadius);
+        gradient.addColorStop(0, "rgba(56,189,248,0.38)");
+        gradient.addColorStop(0.5, "rgba(34,197,94,0.45)");
+        gradient.addColorStop(1, "rgba(59,130,246,0.48)");
+
+        ctx.beginPath();
+        scores.forEach((score, i) => {
+            const ratio = (score / 100) * eased;
+            const r = maxRadius * (0.15 + 0.85 * ratio);
+            const x = center.x + r * Math.cos(angles[i]);
+            const y = center.y + r * Math.sin(angles[i]);
+            if (i === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        });
+        ctx.closePath();
+        ctx.fillStyle = gradient;
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(15,23,42,0.55)";
+        ctx.lineWidth = 1.4;
+        ctx.stroke();
+
+        scores.forEach((score, i) => {
+            const ratio = (score / 100) * eased;
+            const r = maxRadius * (0.15 + 0.85 * ratio);
+            const x = center.x + r * Math.cos(angles[i]);
+            const y = center.y + r * Math.sin(angles[i]);
+            const pointColor = colorForScore(score);
+
+            ctx.beginPath();
+            ctx.arc(x,y,5,0,Math.PI*2);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(x,y,4,0,Math.PI*2);
+            ctx.fillStyle = pointColor;
+            ctx.fill();
+        });
+
+        ctx.restore();
+    }
+
+    radarConfig.drawBase = () => {
+        const { ctx, size } = radarConfig;
+        ctx.clearRect(0,0,size,size);
+        const { center, maxRadius, levels, angles } = radarConfig;
+        ctx.save();
+        ctx.strokeStyle = "rgba(148,163,184,0.4)";
+        ctx.lineWidth = 1;
+        for (let l = 1; l <= levels; l++) {
+            const r = maxRadius * l / levels;
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, r, 0, Math.PI*2);
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.strokeStyle = "rgba(148,163,184,0.25)";
+        ctx.lineWidth = 1;
+        angles.forEach(angle => {
+            ctx.beginPath();
+            ctx.moveTo(center.x, center.y);
+            ctx.lineTo(center.x + maxRadius * Math.cos(angle), center.y + maxRadius * Math.sin(angle));
+            ctx.stroke();
+        });
+        ctx.restore();
+        drawRadarPolygon(1);
+    };
+
+    requestAnimationFrame(draw);
+
+    // legend
+    const legend = document.getElementById("radarLegend");
+    legend.innerHTML = topics.map((t) => `
+        <div class="legend-item">
+            <span class="legend-color" style="background:${colorForScore(t.score)}"></span>
+            <span>${t.name}</span>
+        </div>
+    `).join("");
+}
+
+// ICONES AUTOUR DU RADAR + FOCUS PANEL
+const radarIconsRing = document.getElementById("radarIconsRing");
+const focusPanel = document.getElementById("focusPanel");
+const focusIcon = document.getElementById("focusIcon");
+const focusTitle = document.getElementById("focusTitle");
+const focusChip = document.getElementById("focusChip");
+const focusBody = document.getElementById("focusBody");
+const focusTags = document.getElementById("focusTags");
+const focusMetrics = document.getElementById("focusMetrics");
+const focusBackBtn = document.getElementById("focusBackBtn");
+let currentFocusIndex = null;
+
+function buildRadarIcons() {
+    const rect = radarIconsRing.getBoundingClientRect();
+    const cx = 50;
+    const cy = 50;
+    const radius = 35; // en pourcentage du conteneur
+
+    radarIconsRing.innerHTML = "";
+
+    topics.forEach((t, i) => {
+        const angle = (360 / topics.length) * i - 90; // start at top
+        const rad = angle * Math.PI / 180;
+        const x = cx + radius * Math.cos(rad);
+        const y = cy + radius * Math.sin(rad);
+
+        const btn = document.createElement("button");
+        btn.className = "radar-icon-btn";
+        btn.style.left = x + "%";
+        btn.style.top = y + "%";
+        btn.innerHTML = t.icon;
+        btn.setAttribute("data-index", i.toString());
+        btn.style.width = "32px";
+        btn.style.height = "32px";
+        btn.style.fontSize = "18px";
+
+        btn.addEventListener("click", () => enterFocus(i));
+
+        radarIconsRing.appendChild(btn);
+    });
+}
+
+function enterFocus(index) {
+    currentFocusIndex = index;
+    const t = topics[index];
+
+    // maj contenu
+    focusIcon.textContent = t.icon;
+    focusTitle.textContent = t.name;
+    focusChip.textContent =
+        t.investigation === 0 ? "Non exploré" :
+        t.investigation === 1 ? "Questionnaire simple" :
+        t.investigation === 2 ? "Questionnaire avancé" :
+        t.investigation === 3 ? "Tracking en cours" :
+        "Analyses bio + tracking";
+
+    focusBody.textContent = t.description;
+
+    focusTags.innerHTML = t.tags.map(tag => `<span class="focus-tag">${tag}</span>`).join("");
+
+    const color = colorForScore(t.score);
+    focusMetrics.innerHTML = `
+        <div class="focus-metric-pill">Score actuel : ${t.score} / 100</div>
+        <div class="focus-metric-pill">Priorité : ${
+            t.score < 55 ? "Niveau 1 (à suivre de près)" :
+            t.score < 70 ? "Niveau 2" :
+            "Zone stable"
+        }</div>
+        <div class="focus-metric-pill" style="border-color:${color};">Couleur clinique : ${color}</div>
+    `;
+
+    // visuel : activer bouton
+    document.querySelectorAll(".radar-icon-btn").forEach(btn => btn.classList.remove("active"));
+    const activeBtn = document.querySelector(`.radar-icon-btn[data-index="${index}"]`);
+    if (activeBtn) activeBtn.classList.add("active");
+
+    // afficher panneau focus (le quart du radar qui devient carré)
+    focusPanel.classList.add("visible");
+}
+
+function exitFocus() {
+    currentFocusIndex = null;
+    focusPanel.classList.remove("visible");
+    document.querySelectorAll(".radar-icon-btn").forEach(btn => btn.classList.remove("active"));
+}
+
+focusBackBtn.addEventListener("click", exitFocus);
+</script>
+
+<script>
+const navItems = document.querySelectorAll(".nav-item");
+
+navItems.forEach(item => {
+    item.addEventListener("click", function() {
+        navItems.forEach(i => i.classList.remove("active"));
+        this.classList.add("active");
+    });
+});
+</script>
+
+<script>
+const sectionTriggers = document.querySelectorAll(".section-trigger");
+
+const sectionToNav = {
+    "vueglobale": document.getElementById("nav-vueglobale"),
+    "facteurs": document.getElementById("nav-facteurs"),
+    "marqueurs": document.getElementById("nav-marqueurs"),
+    "programme": document.getElementById("nav-programme")
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting){
+            Object.values(sectionToNav).forEach(n => n.classList.remove("active"));
+            const nav = sectionToNav[entry.target.dataset.section];
+            if(nav) nav.classList.add("active");
+        }
+    });
+}, { threshold: 0.4 });
+
+sectionTriggers.forEach(t => observer.observe(t));
+</script>
+
+</body>
+</html>

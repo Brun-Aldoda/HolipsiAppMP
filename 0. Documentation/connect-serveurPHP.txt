@@ -1,0 +1,8 @@
+📟 Voici la commande à mettre dans le terminal pour lancer un serveur Python afin de visualiser mon site App :
+
+cd "/Users/macbookbruno/Dropbox/.../project-root"
+python3 -m http.server 5500
+
+🌐 pour me connecter sur la navigateur
+http://localhost:5500
+

@@ -1,0 +1,596 @@
+====================================================
+SECTION 7 — CORRECTION SURBRILLANCE + ENCODAGE UTF‑8
+====================================================
+
+Explication :
+Après la migration vers l’architecture Option B, deux types de problèmes peuvent apparaître :
+1) la surbrillance active du menu latéral ne fonctionne plus (car l’iframe a été supprimée),
+2) certains textes affichent des caractères corrompus (« Ã© », « ÔŸœ », etc.), liés à l’absence ou au mauvais placement du charset UTF‑8.
+
+Cette section corrige ces deux problèmes de manière robuste et pérenne.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans le fichier `/assets/js/global.js`, ajouter en bas du fichier le code suivant, permettant la détection automatique de la page active :
+
+document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll(".nav-item");
+    links.forEach(link => {
+        const target = link.getAttribute("href");
+        if (target && window.location.pathname.endsWith(target)) {
+            link.classList.add("active");
+        }
+    });
+});
+
+2. Dans les fichiers suivants :
+   - `/pages/vue-globale.html`
+   - `/pages/facteurs.html`
+   - `/pages/marqueurs.html`
+   - `/pages/programme.html`
+   - `/index.html`
+   → Vérifier et, si nécessaire, ajouter dans le <head> :
+
+<meta charset="UTF-8">
+
+3. Dans le fichier `/layout/sidebar.html`, s’assurer que le fichier est enregistré en UTF‑8 et que tout texte contenant des accents s’affiche correctement. Si des caractères sont déjà corrompus, les remplacer par leurs versions correctes.
+
+4. Si un fichier HTML contient du texte brisé du type « PrioritÃ© », remplacer ces valeurs par leur forme correcte (« Priorité »).
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 8 — RÉTABLIR LA SURBRILLANCE ACTIVE DANS LA SIDEBAR
+====================================================
+
+Objectif :
+Dans la version multipage, la sidebar n’indique plus quelle page est active.  
+Le hover fonctionne, mais la classe `.active` n’est jamais appliquée.  
+Cette section doit rétablir le même comportement que dans le prototype monopage :  
+→ Lorsque l’utilisateur charge une page, l’onglet correspondant dans la sidebar doit recevoir la classe `.active`, et afficher la même surbrillance visuelle que dans l’ancien système.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans le fichier `/assets/js/global.js`, ajouter à la fin du fichier le script suivant, permettant de détecter l’URL courante et d’appliquer la classe `.active` au bon lien de navigation :
+
+document.addEventListener("DOMContentLoaded", () => {
+    const links = document.querySelectorAll(".nav-item");
+
+    links.forEach(link => {
+        const target = link.getAttribute("href");
+        if (target && window.location.pathname.includes(target)) {
+            link.classList.add("active");
+        }
+    });
+});
+
+2. Vérifier que tous les liens de navigation dans `/layout/sidebar.html` possèdent bien la classe `nav-item` et un attribut `href` correspondant aux pages multipages :
+
+Exemple attendu :
+<a class="nav-item" href="/pages/vue-globale.html">Vue globale</a>
+
+3. Vérifier que la classe `.active` appliquée aux éléments `.nav-item` déclenche bien la surbrillance attendue (style bleu lumineux).  
+Si le style `.active` existe dans l’ancien CSS mais pas dans le nouveau, le recopier depuis la version monolithique.
+
+4. Tester le fonctionnement sur les pages :
+   - `/pages/vue-globale.html`
+   - `/pages/facteurs.html`
+   - `/pages/marqueurs.html`
+   - `/pages/programme.html`
+   et s’assurer que la surbrillance est correcte à chaque navigation.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 9 — RÉPARATION DE LA PAGE VUE-GLOBALE + MIGRATION DES THÉMATIQUES DÉTAILLÉES
+====================================================
+
+Objectif :
+1) Restaurer la structure correcte de la page *vue-globale.html* telle qu’elle apparaissait dans le fichier monopage initial (résumé synthétique complet, mise en page correcte, blocs encadrés).
+2) Supprimer les sections « Thématiques détaillées » de *vue-globale.html*.
+3) Déplacer toute la section « Thématiques détaillées » vers la page *marqueurs.html*.
+4) Vérifier que les styles nécessaires sont bien présents dans `style.css`.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Ouvrir le fichier source monopage `Marqueurs_Navigateur 0.2.html` et localiser précisément le bloc HTML correspondant à la section « Vue globale » d'origine :
+   - Titre : "Vue globale"
+   - Résumé synthétique complet
+   - Blocs encadrés (score moyen global, équilibre, thématiques, zones à suivre, etc.)
+   - Mise en page d’origine avec conteneurs et classes existantes
+
+2. Dans `/pages/vue-globale.html` :
+   - Supprimer tout le contenu actuel situé après le titre `<h1>Vue globale</h1>` jusqu’à la fin du fichier.
+   - Remplacer ce contenu par le bloc « Vue globale » extrait du fichier monopage.
+   - Vérifier que les classes utilisées existent dans le CSS global (`/assets/css/style.css`).
+
+3. Toujours dans `/pages/vue-globale.html` :
+   - Identifier et supprimer toute la section intitulée « Thématiques détaillées » (titres « Priorité 1 », « Priorité 2 », etc., et toutes les cartes associées).
+
+4. Dans `/pages/marqueurs.html` :
+   - Insérer le bloc complet « Thématiques détaillées » juste après l’introduction de la page et/ou après le radar, en conservant la structure d’origine.
+   - S’assurer que l’ordre d’affichage des priorités est respecté.
+
+5. Dans `/assets/css/style.css` :
+   - Vérifier que les styles nécessaires pour les encadrés de résumé et les cartes sont présents.
+   - Si certaines classes étaient définies dans une balise `<style>` du fichier monopage, les copier dans ce fichier CSS.
+
+6. Vérifier visuellement la cohérence :
+   - *vue-globale.html* doit afficher uniquement le résumé synthétique proprement stylé.
+   - *marqueurs.html* doit afficher toutes les sections « Thématiques détaillées ».
+   - Aucun doublon ne doit rester.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 10 — RECONSTRUCTION DES BLOCS “FACTEURS DE SANTÉ”
+Option C — Cartes Responsives Flex Premium
+====================================================
+
+Explication :
+La page /pages/facteurs.html doit retrouver :
+1) les blocs colorés avec icônes tels qu’ils apparaissaient dans le prototype monolithique,
+2) l’effet visuel (léger hover + élévation + contour),
+3) un layout responsive moderne utilisant Flexbox (Option C validée),
+4) le texte descriptif détaillé sous les blocs (texte déjà présent dans la version multipage).
+
+Cette section reconstruit entièrement la zone des "5 niveaux" avec un design propre, scalable, responsive, maintenable, fidèle au prototype initial.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans `/pages/facteurs.html` :
+   - Localiser la zone actuelle où s’affiche uniquement le texte des niveaux (Niveau 1 — Facteurs génétiques, etc.).
+   - JUSTE AVANT ce texte, insérer un conteneur :
+
+<div class="factors-grid">
+    <div class="factor-card level-1">
+        <span class="icon">🧬</span>
+        <h3>Niveau 1 — Épigénétique</h3>
+    </div>
+    <div class="factor-card level-2">
+        <span class="icon">🔥</span>
+        <h3>Niveau 2 — Inflammatoire</h3>
+    </div>
+    <div class="factor-card level-3">
+        <span class="icon">⚡</span>
+        <h3>Niveau 3 — Métabolique</h3>
+    </div>
+    <div class="factor-card level-4">
+        <span class="icon">🧠</span>
+        <h3>Niveau 4 — Neurologique</h3>
+    </div>
+    <div class="factor-card level-5">
+        <span class="icon">🎯</span>
+        <h3>Niveau 5 — Fonctionnel</h3>
+    </div>
+</div>
+
+2. Dans `/assets/css/style.css` :
+   Ajouter à la fin du fichier le style complet suivant :
+
+/* ===== FACTEURS – Cartes Premium (Option C) ===== */
+.factors-grid {
+    display: flex;
+    gap: 24px;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: wrap;
+    margin: 40px 0;
+}
+
+.factor-card {
+    width: 240px;
+    padding: 24px;
+    border-radius: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.factor-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+.factor-card h3 {
+    margin-top: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.factor-card .icon {
+    font-size: 28px;
+}
+
+/* Couleurs de niveaux */
+.level-1 { background: #cfe9ff; }
+.level-2 { background: #c2f4dc; }
+.level-3 { background: #fdeca7; }
+.level-4 { background: #ffd1cc; }
+.level-5 { background: #f9c7e9; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .factor-card { width: 45%; }
+}
+
+@media (max-width: 600px) {
+  .factor-card { width: 100%; }
+}
+
+3. Dans `/pages/facteurs.html` :
+   - Vérifier que le texte descriptif détaillé (Niveau 1 — Facteurs génétiques, etc.) reste présent sous la grille.
+   - Ne pas modifier ce texte. Il doit apparaître immédiatement après les cartes.
+
+4. Vérifier :
+   - Les cartes doivent s'afficher correctement.
+   - Le hover doit fonctionner.
+   - Le layout doit être responsive.
+   - Les couleurs doivent correspondre au prototype original.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 11 — CORRECTION DU FLASH DE SIDEBAR (FOUC)  
+Stabilisation du layout lors du changement de page
+====================================================
+
+Explication :
+Lors du passage d’une page à l’autre, la sidebar disparaît brièvement puis réapparaît après le chargement du composant `<app-sidebar>` via fetch().  
+Ce délai provoque :
+- un décalage du contenu vers la gauche puis vers la droite,
+- une impression de “flash”,
+- une transition peu fluide et non professionnelle.
+
+Objectif de cette section :
+1) Réserver l’espace de la sidebar AVANT son chargement (largeur fixe + min-height).  
+2) Ajouter un “placeholder” temporaire pour éviter tout flash visuel.  
+3) Stabiliser le layout de toutes les pages instantanément.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans `/assets/css/style.css`, ajouter à la fin du fichier :
+
+/* =============================== */
+/*  FIX FOUC — Sidebar permanente  */
+/* =============================== */
+
+app-sidebar {
+    display: block;
+    width: 240px;          /* Réserve immédiatement l’espace */
+    flex-shrink: 0;
+    min-height: 100vh;
+    background: #ffffff;   /* Même couleur que la sidebar réelle */
+}
+
+/* Placeholder affiché avant chargement réel */
+.sidebar-placeholder {
+    width: 100%;
+    height: 100vh;
+    background: #f6f6f6; /* Couleur neutre cohérente avec la sidebar */
+}
+
+2. Dans `/assets/js/sidebar-component.js`, remplacer le contenu de connectedCallback() par :
+
+connectedCallback() {
+    // Placeholder pour éviter le flash de layout
+    this.innerHTML = `
+        <div class="sidebar-placeholder"></div>
+    `;
+
+    // Chargement réel de la sidebar
+    fetch("/layout/sidebar.html")
+        .then(res => res.text())
+        .then(html => {
+            this.innerHTML = html;
+        });
+}
+
+3. Vérifier :
+   - La sidebar reste visible immédiatement sur toutes les pages.
+   - Plus aucun décalage horizontal du contenu.
+   - Plus aucun flash de layout.
+   - L’affichage est fluide lors de la navigation entre pages.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+
+====================================================
+SECTION 12 — REPOSITIONNEMENT RADAR + THÉMATIQUES
+====================================================
+
+Objectifs :
+
+1) Repositionner le cadre « Profil global des thématiques » (radar) immédiatement à droite de la sidebar dans une colonne `marqueurs-left`.  
+2) Repositionner le bloc « Thématiques détaillées » dans une colonne à droite du radar (`marqueurs-right`), **sans modifier sa structure interne** (priorités + cartes horizontales inchangées).
+
+IMPORTANT —  
+Le bloc « Thématiques détaillées » ne doit PAS être modifié dans son HTML interne, ni dans son CSS, ni dans l’ordre des cartes.  
+Il doit simplement être déplacé dans la colonne de droite.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans `/pages/marqueurs.html`, envelopper le radar et les thématiques détaillées dans un conteneur :
+
+<div class="marqueurs-grid">
+    <div class="marqueurs-left">
+        <!-- Radar actuel : NE PAS modifier -->
+        ... radar existant ...
+    </div>
+
+    <div class="marqueurs-right">
+        <!-- Bloc Thématiques détaillées : NE PAS modifier -->
+        ... thématiques détaillées existantes ...
+    </div>
+</div>
+
+2. Dans `/assets/css/style.css`, ajouter à la fin :
+
+/* ============================= */
+/* LAYOUT MARQUEURS — 2 COLONNES */
+/* ============================= */
+
+.marqueurs-grid {
+    display: flex;
+    gap: 40px;
+    margin-top: 20px;
+    align-items: flex-start;
+}
+
+.marqueurs-left {
+    flex: 0 0 420px;
+}
+
+.marqueurs-right {
+    flex-grow: 1;
+}
+
+3. Ne rien modifier d’autre dans la page.  
+Ne pas altérer le radar.  
+Ne pas altérer les thématiques détaillées.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 13 — SIDEBAR FIXE (NE BOUGE PAS AU SCROLL)
+====================================================
+
+Objectif :
+1) Rendre la sidebar totalement fixe.
+2) Empêcher tout déplacement quand la page scrolle.
+3) Forcer la sidebar à occuper toute la hauteur de l’écran.
+4) Permettre le scroll interne de la sidebar si son contenu dépasse.
+5) Décaler correctement le contenu principal vers la droite.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans `/assets/css/style.css`, ajouter en bas du fichier :
+
+/* =============================== */
+/*  SIDEBAR FIXE — FULL HEIGHT     */
+/* =============================== */
+
+app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;      /* Largeur sidebar */
+    height: 100vh;     /* Hauteur plein écran */
+    overflow-y: auto;  /* Scroll interne si nécessaire */
+    background: #ffffff;
+    z-index: 1000;     /* Toujours visible au-dessus du contenu */
+}
+
+/* Décalage du contenu principal */
+.page-content {
+    margin-left: 240px;
+}
+
+2. Vérifier que toutes les pages utilisent bien :
+
+<div class="layout">
+    <app-sidebar></app-sidebar>
+    <main class="page-content">
+        ... contenu ...
+    </main>
+</div>
+
+3. Tester sur :
+   - vue-globale.html
+   - facteurs.html
+   - marqueurs.html
+   - programme.html
+
+Résultat attendu :
+✔ La sidebar ne bouge plus du tout lorsque l’on scrolle.
+✔ Le contenu principal scrolle indépendamment.
+✔ La sidebar reste visible à 100% en permanence.
+✔ Le bas du menu est accessible via scroll interne.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 14 — DARK MODE (THÈME SOMBRE / THÈME CLAIR)
+====================================================
+
+Objectif :
+Ajouter un bouton dans la sidebar permettant à l’utilisateur de basculer entre le mode clair et le mode sombre.  
+Le choix doit être conservé entre les pages et persister après rechargement grâce à `localStorage`.  
+L’implémentation doit fonctionner dans l’architecture multipage actuelle.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. **Dans `/layout/sidebar.html`**, ajouter le bouton de bascule de thème en bas du menu :
+
+<div class="theme-toggle">
+    <button id="toggle-theme">🌙 Mode sombre</button>
+</div>
+
+2. **Dans `/assets/js/global.js`**, ajouter en bas du fichier :
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btn = document.getElementById("toggle-theme");
+    if (btn) {
+        btn.addEventListener("click", () => {
+            document.body.classList.toggle("dark");
+            const mode = document.body.classList.contains("dark") ? "dark" : "light";
+            localStorage.setItem("theme", mode);
+        });
+    }
+
+    // Appliquer le thème sauvegardé
+    const saved = localStorage.getItem("theme");
+    if (saved === "dark") {
+        document.body.classList.add("dark");
+    }
+});
+
+3. **Dans `/assets/css/style.css`**, ajouter en haut du fichier :
+
+:root {
+  --bg: #ffffff;
+  --text: #222222;
+  --sidebar-bg: #f4f4f4;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+.dark {
+  --bg: #111111;
+  --text: #eaeaea;
+  --sidebar-bg: #1b1b1b;
+}
+
+app-sidebar {
+  background: var(--sidebar-bg);
+}
+
+4. Vérifier :
+   - Le bouton “🌙 Mode sombre” apparaît dans la sidebar.
+   - Le thème alterne correctement entre clair et sombre.
+   - Le choix est conservé entre les changements de page.
+   - Le thème reste appliqué après fermeture et réouverture du navigateur.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 15 — ALIGNEMENT HORIZONTAL  
+DES CARTES COLORÉES + DES BLOCS BLANCS
+====================================================
+
+Objectif :
+Reproduire la mise en page du prototype initial :
+1) Une première ligne horizontale contenant les 5 cartes colorées.
+2) Une deuxième ligne horizontale contenant les 5 blocs blancs descriptifs.
+3) Les deux lignes doivent être alignées proprement, sans retomber en colonne.
+
+Cette section crée un nouveau conteneur Flex pour les blocs blancs,
+afin qu’ils s’affichent horizontalement comme les cartes colorées.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans `/pages/facteurs.html` :
+   - Localiser la section contenant les blocs blancs :
+     (Exemples : « Niveau 1 — Facteurs génétiques », « Niveau 2 — Facteurs environnementaux », etc.)
+   - Entourer **tous** ces blocs blancs dans un conteneur :
+
+<div class="factors-text-grid">
+    ... tous les blocs blancs existants, sans modification interne ...
+</div>
+
+IMPORTANT :
+Ne pas modifier le HTML interne de chaque bloc.
+Il faut uniquement les regrouper dans ce nouveau conteneur.
+
+2. Dans `/assets/css/style.css` :
+   Ajouter à la fin du fichier :
+
+/* ===== FACTEURS — Ligne horizontale des blocs blancs ===== */
+.factors-text-grid {
+    display: flex;
+    gap: 24px;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: wrap;   /* Permet de s’adapter si la largeur est insuffisante */
+    margin: 20px 0 40px 0;
+}
+
+.factors-text-grid > * {
+    flex: 0 0 240px;   /* Largeur identique aux cartes colorées */
+}
+
+@media (max-width: 900px) {
+  .factors-text-grid > * { flex: 0 0 45%; }
+}
+
+@media (max-width: 600px) {
+  .factors-text-grid > * { flex: 0 0 100%; }
+}
+
+3. Vérifier :
+   - Les 5 cartes colorées sont sur une ligne.
+   - Les 5 blocs blancs sont sur une ligne juste en dessous.
+   - Le tout s’aligne proprement, sans retomber verticalement.
+   - Le layout reste responsive.
+
+<<< CURSOR_INSTRUCTIONS_END >>>
+====================================================
+SECTION 16 — ALIGNEMENT FINAL DES BLOCS COLORÉS + BLOCS BLANCS
+====================================================
+
+Objectif :
+Assurer que les blocs colorés (ligne 1) et les blocs blancs (ligne 2) soient parfaitement alignés horizontalement, avec les mêmes largeurs, la même logique flex, et qu’aucun d’eux ne retombe en colonne tant que l’espace disponible le permet.
+
+<<< CURSOR_INSTRUCTIONS_START >>>
+
+1. Dans `/pages/facteurs.html` :
+   - Vérifier que les 5 cartes colorées sont déjà regroupées dans un conteneur `.factors-grid`.
+   - Vérifier que les 5 blocs blancs descriptifs sont déjà regroupés dans `.factors-text-grid`.
+   - Si un bloc blanc n’est pas dans le conteneur, le replacer sans modifier son HTML interne.
+
+2. Dans `/assets/css/style.css` :
+   Ajouter ou remplacer les règles suivantes pour que les deux lignes utilisent la même largeur et le même comportement :
+
+/* Harmonisation des largeurs colorées + blanches */
+.factors-grid .factor-card,
+.factors-text-grid > * {
+    flex: 0 0 240px;     /* Largeur identique */
+    max-width: 240px;
+}
+
+/* Ligne des cartes colorées */
+.factors-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 32px;
+}
+
+/* Ligne des blocs blancs */
+.factors-text-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    margin-bottom: 48px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .factors-grid .factor-card,
+    .factors-text-grid > * {
+        flex: 0 0 45%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .factors-grid .factor-card,
+    .factors-text-grid > * {
+        flex: 0 0 100%;
+    }
+}
+
+3. Vérifier visuellement :
+   - Ligne 1 : 5 cartes colorées côte à côte.
+   - Ligne 2 : 5 blocs blancs côte à côte.
+   - Alignement parfait entre les deux lignes.
+   - Aucun débordement ni colonne inattendue en desktop.
+
+<<< CURSOR_INSTRUCTIONS_END >>>

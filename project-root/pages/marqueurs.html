@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Marqueurs — HoliPsy Lab</title>
+    <link rel="stylesheet" href="/assets/css/style.css"/>
+</head>
+<body>
+<div class="layout">
+    <app-sidebar></app-sidebar>
+    <main class="page-content">
+
+            <h1 class="page-title">Marqueurs de santé</h1>
+
+            <div class="marqueurs-grid">
+                <div class="marqueurs-left">
+                    <!-- Radar container -->
+                    <div class="card" id="radarCard" style="max-width:480px; margin:auto; margin-top:60px;">
+                        <h2>Profil global des thématiques</h2>
+                        <p>Clique sur une icône autour du radar pour explorer une thématique en détail.</p>
+
+                        <div class="radar-wrapper">
+                            <canvas id="radarCanvas"></canvas>
+
+                            <!-- Icônes autour du radar -->
+                            <div class="radar-icons-ring" id="radarIconsRing"></div>
+
+                            <!-- Panneau focus -->
+                            <div class="focus-panel" id="focusPanel">
+                                <div class="focus-header">
+                                    <div class="focus-title-block">
+                                        <div class="focus-icon" id="focusIcon">🌙</div>
+                                        <div>
+                                            <div class="focus-title" id="focusTitle">Sommeil</div>
+                                            <div class="focus-chip" id="focusChip">Questionnaire avancé + tracking</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="focus-body" id="focusBody">
+                                    Description détaillée de la thématique sélectionnée.
+                                </div>
+
+                                <div class="focus-tags" id="focusTags"></div>
+
+                                <div class="focus-metrics" id="focusMetrics"></div>
+
+                                <button class="focus-back-btn" id="focusBackBtn">
+                                    ⟵ Retour au radar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="radar-legend" id="radarLegend"></div>
+
+                        <div class="pill-row">
+                            <span class="small-pill">Score 0–100 par thématique</span>
+                            <span class="small-pill">Icônes interactives autour du radar</span>
+                            <span class="small-pill">Vue focus = « quart du radar » → carte carrée</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="marqueurs-right">
+                    <!-- Filtre -->
+                    <div style="display:flex; justify-content:flex-end; margin:20px 0;">
+                        <select id="priorityFilter" class="priority-select">
+                            <option value="asc">Priorité croissante</option>
+                            <option value="desc">Priorité décroissante</option>
+                        </select>
+                    </div>
+
+                    <!-- Grille des thématiques -->
+                    <section>
+                        <h2 style="margin-bottom:12px;">Thématiques détaillées</h2>
+                        <p style="color:var(--text-secondary); font-size:13px; margin-bottom:16px;">
+                            Base de travail pour la future intégration dans l'application OlypsyLab
+                        </p>
+
+                        <div id="topicGrid"></div>
+                    </section>
+                </div>
+            </div>
+
+    </main>
+</div>
+
+<script src="/assets/js/sidebar-component.js"></script>
+<script src="/assets/js/global.js"></script>
+<script src="/assets/js/radar.js"></script>
+</body>
+</html>
