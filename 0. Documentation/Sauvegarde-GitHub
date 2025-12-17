@@ -1,0 +1,97 @@
+POUR SAUVEGARDER
+
+git add .
+git commit -m "Description de ta modification"
+git push
+
+------------------------------------------------------------
+### DÉPLOIEMENT — (C) Activer GitHub Pages pour publier le site
+
+1. Aller sur GitHub → *Settings* → *Pages*
+2. Dans **Source**, choisir :
+   - **Deploy from a branch**
+   - Branch : **main**
+   - Folder : **/root** (ou `/docs` si vous créez un dossier docs)
+3. Sauvegarder.
+
+🔧 Commandes utiles (si vous souhaitez utiliser un dossier `/docs`) :
+
+```
+git checkout main
+mkdir docs
+cp -R pages docs/
+cp index.html docs/
+git add .
+git commit -m "Préparation GitHub Pages"
+git push
+```
+
+L’URL finale sera :
+
+```
+https://<votre-identifiant>.github.io/HolipsiAppMP/
+```
+
+------------------------------------------------------------
+### BRANCHES — (B) Créer une branche de développement
+
+Créer une branche de développement :
+
+```
+git checkout -b dev
+git push --set-upstream origin dev
+```
+
+Basculer vers la branche dev :
+
+```
+git checkout dev
+```
+
+Revenir à la branche stable :
+
+```
+git checkout main
+```
+
+Fusionner dev dans main :
+
+```
+git checkout main
+git merge dev
+git push
+```
+
+------------------------------------------------------------
+### TAGS — (A) Créer des versions pour suivre l’évolution
+
+Créer un tag :
+
+```
+git tag v1.0.0
+```
+
+Envoyer le tag sur GitHub :
+
+```
+git push origin v1.0.0
+```
+
+Lister les tags :
+
+```
+git tag
+```
+
+Supprimer un tag local :
+
+```
+git tag -d v1.0.0
+```
+
+Supprimer un tag sur GitHub :
+
+```
+git push --delete origin v1.0.0
+```
+------------------------------------------------------------

@@ -10,7 +10,7 @@ class SidebarComponent extends HTMLElement {
   }
 
   loadSidebar() {
-    fetch("/layout/sidebar.html")
+    fetch("../layout/sidebar.html")
       .then(res => res.text())
       .then(html => {
         this.innerHTML = html;
@@ -33,14 +33,15 @@ class SidebarComponent extends HTMLElement {
 
   static normalizePath(path = "") {
     try {
+      // Extraire juste le nom du fichier pour la comparaison
       const url = new URL(path, window.location.origin);
-      let pathname = url.pathname.replace(/\/$/, "");
-      if (!pathname || pathname === "" || pathname === "/") {
-        return "/pages/vue-globale.html";
+      let pathname = url.pathname;
+      
+      // Normaliser pour la comparaison
+      if (pathname.endsWith('/')) {
+        pathname = pathname.slice(0, -1);
       }
-      if (pathname === "/index.html") {
-        return "/pages/vue-globale.html";
-      }
+      
       return pathname;
     } catch (e) {
       return path;
